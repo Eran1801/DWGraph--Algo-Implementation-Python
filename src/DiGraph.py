@@ -7,7 +7,7 @@ class DiGraph(GraphInterface):
     def __init__(self):
         self._num_of_nodes = 0
         self._num_of_edges = 0
-        self._nodes = {}
+        self._nodes = {}  # Holds the nodes in the graph
         self._mc = 0
 
     """
@@ -41,6 +41,7 @@ class DiGraph(GraphInterface):
 
     def all_in_edges_of_node(self, id1: int) -> dict:
 
+        # a var from kind of node_data call the function that returns all the edges that connect to him
         return self._nodes[id1].get_all_edges_to_node()
 
     """
@@ -50,6 +51,7 @@ class DiGraph(GraphInterface):
 
     def all_out_edges_of_node(self, id1: int) -> dict:
 
+        # a var from kind of node_data call the function that returns all the edges that connect from him
         return self._nodes[id1].get_all_edges_from_node()
 
     def get_mc(self) -> int:
@@ -87,7 +89,7 @@ class DiGraph(GraphInterface):
     def add_node(self, node_id: int, pos: tuple = None) -> bool:
         if node_id in self._nodes:
             return False
-        self._nodes[node_id] = NodeData(node_id, pos)
+        self._nodes[node_id] = NodeData(node_id, pos)  # pos in default = None
         self._mc += 1
         self._num_of_nodes += 1
         return True
@@ -105,11 +107,13 @@ class DiGraph(GraphInterface):
         if node_id in self._nodes:
 
             # removes all the edges that connected to node_id
+            # Note : key_of_edge_to_delete is the src key of the edge that will be deleted
             for key_of_edge_to_delete in self._nodes[node_id].get_all_edges_to_node():
                 self._nodes[key_of_edge_to_delete].remove_edge_from(node_id)
                 self._mc += 1
 
             # removes all the edges that connected from node_id
+            # Note : key_of_edge_to_delete is the src key of the edge that will be deleted
             for key_of_edge_to_delete in self._nodes[node_id].get_all_edges_from_node():
                 self._nodes[key_of_edge_to_delete].remove_edge_to(node_id)
                 self._mc += 1
@@ -141,3 +145,4 @@ class DiGraph(GraphInterface):
 
     def __repr__(self):
         return "Graph: |V|=" + str(self._num_of_nodes) + " , |E|=" + str(self._num_of_edges)
+

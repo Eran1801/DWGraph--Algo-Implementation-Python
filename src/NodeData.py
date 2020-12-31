@@ -15,10 +15,10 @@ class NodeData:
         self._pos: tuple = pos
 
     def get_all_edges_to_node(self):
-        return self._edges_to_node
+        return self._edges_to_node  # return a dict that holds all the edges that connected to this call node
 
     def get_all_edges_from_node(self):
-        return self._edges_from_node
+        return self._edges_from_node  # return a dict that holds all the edges that connected from this call node
 
     def get_key(self) -> int:
         return self._key
@@ -46,6 +46,9 @@ class NodeData:
 
     def has_edge(self, dest: int) -> bool:
         return True if dest in self._edges_from_node else False
+
+    def get_pos(self) -> tuple:
+        return self._pos
 
     @property  # kind of a get function to the _edged_from_node , we can easily change it to not protected
     def edges_from_node(self):
