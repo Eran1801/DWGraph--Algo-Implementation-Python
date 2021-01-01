@@ -9,6 +9,7 @@ from DiGraph import DiGraph
 
 class GraphAlgo(GraphAlgoInterface):
 
+    # When you create an instance of this Class the graph that you will working on is the DiGraph
     def __init__(self, graph: DiGraph):
         self._graph = graph
 
@@ -28,15 +29,16 @@ class GraphAlgo(GraphAlgoInterface):
     def load_from_json(self, file_name: str) -> bool:
 
         try:
-            with open(file_name) as f:
-                graph_dict = json.load(f)
-            g = DiGraph()
-            for node in graph_dict["Nodes"]:
+            with open(file_name) as f: # go to the path file and open it as a file
+                graph_dict = json.load(f)  # create a dict that contains the data inside the json file
+            g = DiGraph()  # create a instance of a DiGraph that we will insert all the data from the json file to him
+            for node in graph_dict["Nodes"]:  # going throw all the nodes in the json file ( graph_dict )
                 node_key = node["id"]
                 node_pos = node["pos"]
+        # each pos value consists 3 float number that separated with a ',' the map take each number and put in a tuple
                 node_pos_tuple = tuple(map(float, node_pos.split(",")))
                 g.add_node(node_key, node_pos_tuple)
-            for edge in graph_dict["Edges"]:
+            for edge in graph_dict["Edges"]:  # Same thing for the Edges in the json file
                 edge_src = int(edge["src"])
                 edge_dest = int(edge["dest"])
                 edge_weight = float(edge["w"])
@@ -54,18 +56,19 @@ class GraphAlgo(GraphAlgoInterface):
 
     def save_to_json(self, file_name: str) -> bool:
 
-        graph_json = {}
+        graph_json = {}  # A dict that will holds the JSON file data of the self._graph
+    # for the node and edge we crate a empty list that will hold the data of them and then will save to the JSON file
         node_list, edge_list = [], []
-        for node in self._graph.get_all_v().values():
+        for node in self._graph.get_all_v().values():  # The values() function return the value, in our case a NodeData
             node_list.append({"id": node.get_key(), "pos": node.get_pos()})
-            for dest, weight in node.get_all_edges_from_node().items():
+            for dest, weight in node.get_all_edges_from_node().items():  # items() return a ' key , value ' of the dict
                 edge_list.append({"src": node.get_key(), "dest": dest, "w": weight})
 
-        graph_json["Nodes"] = node_list
-        graph_json["Edges"] = edge_list
+        graph_json["Nodes"] = node_list  # In the place of the nodes insert the node_list that we create
+        graph_json["Edges"] = edge_list  # Same for the edge_list
         try:
-            with open(file_name, 'w') as fp:
-                json.dump(graph_json, fp)
+            with open(file_name, 'w') as f:
+                json.dump(graph_json, f)
             return True
         except Exception as e:
             print(e)
