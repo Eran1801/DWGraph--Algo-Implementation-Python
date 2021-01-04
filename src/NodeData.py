@@ -8,14 +8,16 @@ class NodeData:
         self._key = key
         self._edges_to_node = {}
         self._location = None
-        self._weight: float = sys.float_info.dig  # like Double.MAXValue()
-        self._info: str = ""
-        self._tag: int = 0
+        self._weight: float = float("inf")  #represents weight in Algo
+        self._info: str = 'WHITE' #represents visited in Algo ("WHITE": not visited, "BLACK": visited)
+        self._tag: int = -1 #represents parent in Algo
         self._edges_from_node = {}
         self._pos: tuple = pos
+        self._id: int = -1 #represents id in algo (used in connected_components)
+        self._low: int = -1 #represents low in algo (used in connected_components)
 
     def get_all_edges_to_node(self):
-        return self._edges_to_node  # return a dict that holds all the edges that connected to this call node
+        return self._edges_to_node  # return a dict that holds all the edges that connected to this call node { key(id_src),weight}
 
     def get_all_edges_from_node(self):
         return self._edges_from_node  # return a dict that holds all the edges that connected from this call node
@@ -36,7 +38,7 @@ class NodeData:
         self._info = info
 
     def get_tag(self) -> int:
-        return self.tag
+        return self._tag
 
     def set_tag(self, tag: int) -> None:
         self._tag = tag
@@ -57,8 +59,8 @@ class NodeData:
     def connect_from_edge(self, node_dest: int, weight: float) -> None:
         self._edges_from_node[node_dest] = weight
 
-    def connect_to_edge(self, node_dest: int, weight: float) -> None:
-        self._edges_to_node[node_dest] = weight
+    def connect_to_edge(self, from_node: int, weight: float) -> None:
+        self._edges_to_node[from_node] = weight
 
     def remove_edge_from(self, node_dest: int) -> None:
         del self._edges_from_node[node_dest]
@@ -66,5 +68,20 @@ class NodeData:
     def remove_edge_to(self, node_dest: int) -> None:
         del self._edges_to_node[node_dest]
 
+    def get_id(self) -> int:
+        return self._id
+
+    def get_low(self) -> int:
+        return self._low
+
+    def set_id(self, id: int) -> None:
+        self._id = id
+
+    def set_low(self, low: int) -> None:
+        self._low = low
+
     def __repr__(self):
         return "" + str(self._key) + ": score " + str(self._tag) #TODO: figure out what is the score
+
+    def __cmp__(self, other):
+        return

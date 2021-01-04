@@ -1,7 +1,12 @@
-import DiGraph
+import sys
+import queue as Q
 
 if __name__ == '__main__':
-    graph = DiGraph()
-    for i in range(5):
-        graph.add_node(i)
 
+    list5 = []
+    list3 = [2,4]
+    list2 = [5,6,7]
+
+    list5.append(list3)
+    list5.append(list2)
+    print(list5)

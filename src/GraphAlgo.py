@@ -1,9 +1,10 @@
 from typing import List
 import json
+import queue as Q
 
 from GraphAlgoInterface import GraphAlgoInterface
 from NodeData import NodeData
-from src import GraphInterface
+from GraphInterface import GraphInterface
 from DiGraph import DiGraph
 
 
@@ -12,10 +13,17 @@ class GraphAlgo(GraphAlgoInterface):
     # When you create an instance of this Class the graph that you will working on is the DiGraph
     def __init__(self, graph: DiGraph):
         self._graph = graph
+        self.reset_algo_variables()
 
     """
     return: the directed graph on which the algorithm works on.
     """
+
+    def reset_algo_variables(self) -> None:
+        self._id_counter = 0
+        self._scc_counter = 0
+        self._stack = []
+
 
     def get_graph(self) -> GraphInterface:
         return self._graph
@@ -34,10 +42,7 @@ class GraphAlgo(GraphAlgoInterface):
             g = DiGraph()  # create a instance of a DiGraph that we will insert all the data from the json file to him
             for node in graph_dict["Nodes"]:  # going throw all the nodes in the json file ( graph_dict )
                 node_key = node["id"]
-                node_pos = node["pos"]
-        # each pos value consists 3 float number that separated with a ',' the map take each number and put in a tuple
-                node_pos_tuple = tuple(map(float, node_pos.split(",")))
-                g.add_node(node_key, node_pos_tuple)
+                g.add_node(node_key)
             for edge in graph_dict["Edges"]:  # Same thing for the Edges in the json file
                 edge_src = int(edge["src"])
                 edge_dest = int(edge["dest"])
@@ -60,7 +65,7 @@ class GraphAlgo(GraphAlgoInterface):
     # for the node and edge we crate a empty list that will hold the data of them and then will save to the JSON file
         node_list, edge_list = [], []
         for node in self._graph.get_all_v().values():  # The values() function return the value, in our case a NodeData
-            node_list.append({"id": node.get_key(), "pos": node.get_pos()})
+            node_list.append({"id": node.get_key()})
             for dest, weight in node.get_all_edges_from_node().items():  # items() return a ' key , value ' of the dict
                 edge_list.append({"src": node.get_key(), "dest": dest, "w": weight})
 
@@ -100,8 +105,44 @@ class GraphAlgo(GraphAlgoInterface):
           """
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
-        pass
+        pq = Q.PriorityQueue()
+        if id1 == id2: return (0,[id1])
+        src_node = self._graph.get_node(id1)
+        dest_node = self._graph.get_node(id2)
+        if src_node == None or dest_node == None: return (float('inf'),[])
+        
+        for edge_dest_key, edge_weight in src_node.get_all_edges_from_node().items():
+            pq.put((edge_weight, src_node.get_key(), edge_dest_key))
 
+        src_node.set_weight(0)
+        src_node.set_info('BLACK')
+
+        while not pq.empty():
+            prioritized_edge = pq.get() # (edge_weight, edge_src_key, edge_dest_key)
+            edge_weight = prioritized_edge[0]
+            node_src_key = prioritized_edge[1]
+            node_dest_key = prioritized_edge[2]
+            neighbor_node = self._graph.get_node(node_dest_key) # get node with key = edge_key
+            
+            if edge_weight < neighbor_node.get_weight():
+                neighbor_node.set_weight(edge_weight)
+                neighbor_node.set_tag(node_src_key)
+
+            if neighbor_node.get_info() != 'BLACK':
+                for edge_dest_key, edge_weight in neighbor_node.get_all_edges_from_node().items():
+                    pq.put((edge_weight + neighbor_node.get_weight(), neighbor_node.get_key(), edge_dest_key))
+                neighbor_node.set_info('BLACK') # mark that node as visited.
+        
+        next_parent = dest_node
+        if next_parent.get_tag() == -1: return (float('inf'),[])
+        path = list()
+        while next_parent.get_tag() != -1:
+            path.append(next_parent.get_key())
+            next_parent = self._graph.get_node(next_parent.get_tag())
+        path.append(next_parent.get_key()) # add the last node
+        path.reverse()
+        return (self._graph.get_node(path[-1]).get_weight(), path)
+            
     """
     Finds the Strongly Connected Component(SCC) that node id1 is a part of.
     @param id1: The node id
@@ -121,8 +162,58 @@ class GraphAlgo(GraphAlgoInterface):
     If the graph is None the function should return an empty list []
     """
 
+    #TODO: returns None for some reason. need to check why
     def connected_components(self) -> List[list]:
-        pass
+        self.reset_algo_variables()
+        for node in self._graph.get_all_v().values():
+            if node.get_id() == -1: #if not visited
+                self.dfs(node)
+        result_list = []
+        for node_id in range(self._graph.v_size()):
+            node_keys = []
+            for node in self._graph.get_all_v().values():
+                if node.get_low() == node_id:
+                    node_keys.append(node.get_key())
+            result_list.append(node_keys)
+
+    def dfs(self, node: NodeData) -> None:
+        node.set_id(self._id_counter)
+        node.set_low(self._id_counter)
+        self._stack.append(self._id_counter)
+        self._id_counter += 1
+
+        for edge_dest_key in node.get_all_edges_from_node():
+            edge_dest_node = self._graph.get_node(edge_dest_key)
+            if edge_dest_node.get_id() == -1:
+                self.dfs(edge_dest_node)
+            if edge_dest_key in self._stack:
+                edge_dest_node.set_low(min(node.get_low(), edge_dest_node.get_low()))
+
+            if node.get_id() == node.get_low():
+                while(not self._stack):
+                    node_key_from_stack = self._stack.pop()
+                    node_from_stack = self._graph.get_node(node_key_from_stack)
+                    node_from_stack.set_low(node.get_id())
+                    if node_from_stack.get_id() == node.get_id():
+                        break
+                self._scc_counter += 1
+                
+
+
+        
+
+
+
+        
+
+
+
+
+
+
+
+
+
 
     """
     Plots the graph.

@@ -55,7 +55,7 @@ class DiGraph(GraphInterface):
         return self._nodes[id1].get_all_edges_from_node()
 
     def get_mc(self) -> int:
-        return self.mc
+        return self._mc
 
     """
     Adds an edge to the graph.
@@ -93,6 +93,9 @@ class DiGraph(GraphInterface):
         self._mc += 1
         self._num_of_nodes += 1
         return True
+
+    def get_node(self, node_id: int) -> NodeData:
+        return self._nodes.get(node_id)
 
     """
     Removes a node from the graph.
@@ -145,4 +148,3 @@ class DiGraph(GraphInterface):
 
     def __repr__(self):
         return "Graph: |V|=" + str(self._num_of_nodes) + " , |E|=" + str(self._num_of_edges)
-
