@@ -1,6 +1,8 @@
+import random
 from typing import List
 import json
 import queue as Q
+import matplotlib.pyplot as plt
 
 from GraphAlgoInterface import GraphAlgoInterface
 from NodeData import NodeData
@@ -11,9 +13,11 @@ from DiGraph import DiGraph
 class GraphAlgo(GraphAlgoInterface):
 
     # When you create an instance of this Class the graph that you will working on is the DiGraph
-    def __init__(self, graph: DiGraph):
+    def __init__(self, graph: DiGraph = None):
         self._graph = graph
-        self.reset_algo_variables()
+        self._id_counter = 0
+        self._scc_counter = 0
+        self._stack = []
 
     """
     return: the directed graph on which the algorithm works on.
@@ -42,7 +46,14 @@ class GraphAlgo(GraphAlgoInterface):
             g = DiGraph()  # create a instance of a DiGraph that we will insert all the data from the json file to him
             for node in graph_dict["Nodes"]:  # going throw all the nodes in the json file ( graph_dict )
                 node_key = node["id"]
-                g.add_node(node_key)
+                if "pos" in node:
+                    node_pos = node["pos"]
+                    node_pos_tuple = tuple(map(float, node_pos.split(",")))
+                else:
+                    random_number_x = random.uniform(35.185, 35.215)
+                    random_number_y = random.uniform(32.098, 32.11)
+                    node_pos_tuple = (random_number_x, random_number_y, 0.0)
+                g.add_node(node_key, node_pos_tuple)
             for edge in graph_dict["Edges"]:  # Same thing for the Edges in the json file
                 edge_src = int(edge["src"])
                 edge_dest = int(edge["dest"])
@@ -105,11 +116,14 @@ class GraphAlgo(GraphAlgoInterface):
           """
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
+        for node in self._graph.get_all_v().values():
+            node.reset_values()
         pq = Q.PriorityQueue()
-        if id1 == id2: return (0,[id1])
+        if id1 == id2: return 0,[id1]
         src_node = self._graph.get_node(id1)
         dest_node = self._graph.get_node(id2)
-        if src_node == None or dest_node == None: return (float('inf'),[])
+        if src_node is None or dest_node is None:
+            return float('inf'), []
         
         for edge_dest_key, edge_weight in src_node.get_all_edges_from_node().items():
             pq.put((edge_weight, src_node.get_key(), edge_dest_key))
@@ -141,7 +155,7 @@ class GraphAlgo(GraphAlgoInterface):
             next_parent = self._graph.get_node(next_parent.get_tag())
         path.append(next_parent.get_key()) # add the last node
         path.reverse()
-        return (self._graph.get_node(path[-1]).get_weight(), path)
+        return self._graph.get_node(path[-1]).get_weight(), path
             
     """
     Finds the Strongly Connected Component(SCC) that node id1 is a part of.
@@ -153,7 +167,12 @@ class GraphAlgo(GraphAlgoInterface):
     """
 
     def connected_component(self, id1: int) -> list:
-        pass
+        sccs = self.connected_components()
+        for list_element in sccs:
+            for id_element in list_element:
+                if id1 == id_element:
+                    return list_element
+
 
     """
     Finds all the Strongly Connected Component(SCC) in the graph.
@@ -162,7 +181,6 @@ class GraphAlgo(GraphAlgoInterface):
     If the graph is None the function should return an empty list []
     """
 
-    #TODO: returns None for some reason. need to check why
     def connected_components(self) -> List[list]:
         self.reset_algo_variables()
         for node in self._graph.get_all_v().values():
@@ -174,7 +192,9 @@ class GraphAlgo(GraphAlgoInterface):
             for node in self._graph.get_all_v().values():
                 if node.get_low() == node_id:
                     node_keys.append(node.get_key())
-            result_list.append(node_keys)
+            if len(node_keys):
+                result_list.append(node_keys)
+        return result_list
 
     def dfs(self, node: NodeData) -> None:
         node.set_id(self._id_counter)
@@ -187,33 +207,16 @@ class GraphAlgo(GraphAlgoInterface):
             if edge_dest_node.get_id() == -1:
                 self.dfs(edge_dest_node)
             if edge_dest_key in self._stack:
-                edge_dest_node.set_low(min(node.get_low(), edge_dest_node.get_low()))
+                node.set_low(min(node.get_low(), edge_dest_node.get_low()))
 
-            if node.get_id() == node.get_low():
-                while(not self._stack):
-                    node_key_from_stack = self._stack.pop()
-                    node_from_stack = self._graph.get_node(node_key_from_stack)
-                    node_from_stack.set_low(node.get_id())
-                    if node_from_stack.get_id() == node.get_id():
-                        break
-                self._scc_counter += 1
-                
-
-
-        
-
-
-
-        
-
-
-
-
-
-
-
-
-
+        if node.get_id() == node.get_low():
+            while len(self._stack):
+                node_key_from_stack = self._stack.pop()
+                node_from_stack = self._graph.get_node(node_key_from_stack)
+                node_from_stack.set_low(node.get_id())
+                if node_from_stack.get_id() == node.get_id():
+                    break
+            self._scc_counter += 1
 
     """
     Plots the graph.
@@ -223,4 +226,27 @@ class GraphAlgo(GraphAlgoInterface):
      """
 
     def plot_graph(self) -> None:
-        pass
+
+        nodes_x = []
+        nodes_y = []
+
+        for node in self._graph.get_all_v().values():
+            nodes_x.append(node.get_pos()[0])
+            nodes_y.append(node.get_pos()[1])
+
+        plt.plot(nodes_x, nodes_y, 'green', 'dashed', 3, 'o', 'blue', 12)
+
+        # setting x and y axis range
+        plt.ylim(32.098, 32.11)
+        plt.xlim(35.185, 35.215)
+
+        # naming the x axis
+        plt.xlabel('x - axis')
+        # naming the y axis
+        plt.ylabel('y - axis')
+
+        # giving a title to my graph
+        plt.title('Graph')
+
+        # function to show the plot
+        plt.show()

@@ -1,3 +1,4 @@
+import random
 import sys
 
 
@@ -12,9 +13,18 @@ class NodeData:
         self._info: str = 'WHITE' #represents visited in Algo ("WHITE": not visited, "BLACK": visited)
         self._tag: int = -1 #represents parent in Algo
         self._edges_from_node = {}
-        self._pos: tuple = pos
+        random_number_x = random.uniform(35.185, 35.215)
+        random_number_y = random.uniform(32.098, 32.11)
+        self._pos: tuple = (random_number_x, random_number_y, 0.0)
         self._id: int = -1 #represents id in algo (used in connected_components)
         self._low: int = -1 #represents low in algo (used in connected_components)
+
+    def reset_values(self) -> None:
+        self._weight: float = float("inf")  # represents weight in Algo
+        self._info: str = 'WHITE'  # represents visited in Algo ("WHITE": not visited, "BLACK": visited)
+        self._tag: int = -1  # represents parent in Algo
+        self._id: int = -1  # represents id in algo (used in connected_components)
+        self._low: int = -1  # represents low in algo (used in connected_components)
 
     def get_all_edges_to_node(self):
         return self._edges_to_node  # return a dict that holds all the edges that connected to this call node { key(id_src),weight}
@@ -43,16 +53,12 @@ class NodeData:
     def set_tag(self, tag: int) -> None:
         self._tag = tag
 
-    def get_edge(self, node_key: int) -> float:
-        return self.edges_from_node.get(node_key)
-
     def has_edge(self, dest: int) -> bool:
         return True if dest in self._edges_from_node else False
 
     def get_pos(self) -> tuple:
         return self._pos
 
-    @property  # kind of a get function to the _edged_from_node , we can easily change it to not protected
     def edges_from_node(self):
         return self._edges_from_node
 
