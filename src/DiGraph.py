@@ -143,6 +143,7 @@ class DiGraph(GraphInterface):
             return False
         self._nodes[node_id1].remove_edge_from(node_id2)
         self._nodes[node_id2].remove_edge_to(node_id1)
+        self._mc += 1
         self._num_of_edges -= 1
         return True
 
