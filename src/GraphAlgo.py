@@ -28,7 +28,6 @@ class GraphAlgo(GraphAlgoInterface):
         self._scc_counter = 0
         self._stack = []
 
-
     def get_graph(self) -> GraphInterface:
         return self._graph
 
@@ -41,7 +40,7 @@ class GraphAlgo(GraphAlgoInterface):
     def load_from_json(self, file_name: str) -> bool:
 
         try:
-            with open(file_name) as f: # go to the path file and open it as a file
+            with open(file_name) as f:  # go to the path file and open it as a file
                 graph_dict = json.load(f)  # create a dict that contains the data inside the json file
             g = DiGraph()  # create a instance of a DiGraph that we will insert all the data from the json file to him
             for node in graph_dict["Nodes"]:  # going throw all the nodes in the json file ( graph_dict )
@@ -64,6 +63,7 @@ class GraphAlgo(GraphAlgoInterface):
         except Exception as e:
             print(e)
             return False
+
     """
     Saves the graph in JSON format to a file
     @param file_name: The path to the out file
@@ -73,7 +73,7 @@ class GraphAlgo(GraphAlgoInterface):
     def save_to_json(self, file_name: str) -> bool:
 
         graph_json = {}  # A dict that will holds the JSON file data of the self._graph
-    # for the node and edge we crate a empty list that will hold the data of them and then will save to the JSON file
+        # for the node and edge we crate a empty list that will hold the data of them and then will save to the JSON file
         node_list, edge_list = [], []
         for node in self._graph.get_all_v().values():  # The values() function return the value, in our case a NodeData
             node_list.append({"id": node.get_key()})
@@ -119,12 +119,13 @@ class GraphAlgo(GraphAlgoInterface):
         for node in self._graph.get_all_v().values():
             node.reset_values()
         pq = Q.PriorityQueue()
-        if id1 == id2: return 0,[id1]
+        if id1 == id2:
+            return 0, [id1]
         src_node = self._graph.get_node(id1)
         dest_node = self._graph.get_node(id2)
         if src_node is None or dest_node is None:
             return float('inf'), []
-        
+
         for edge_dest_key, edge_weight in src_node.get_all_edges_from_node().items():
             pq.put((edge_weight, src_node.get_key(), edge_dest_key))
 
@@ -132,12 +133,12 @@ class GraphAlgo(GraphAlgoInterface):
         src_node.set_info('BLACK')
 
         while not pq.empty():
-            prioritized_edge = pq.get() # (edge_weight, edge_src_key, edge_dest_key)
+            prioritized_edge = pq.get()  # (edge_weight, edge_src_key, edge_dest_key)
             edge_weight = prioritized_edge[0]
             node_src_key = prioritized_edge[1]
             node_dest_key = prioritized_edge[2]
-            neighbor_node = self._graph.get_node(node_dest_key) # get node with key = edge_key
-            
+            neighbor_node = self._graph.get_node(node_dest_key)  # get node with key = edge_key
+
             if edge_weight < neighbor_node.get_weight():
                 neighbor_node.set_weight(edge_weight)
                 neighbor_node.set_tag(node_src_key)
@@ -145,18 +146,18 @@ class GraphAlgo(GraphAlgoInterface):
             if neighbor_node.get_info() != 'BLACK':
                 for edge_dest_key, edge_weight in neighbor_node.get_all_edges_from_node().items():
                     pq.put((edge_weight + neighbor_node.get_weight(), neighbor_node.get_key(), edge_dest_key))
-                neighbor_node.set_info('BLACK') # mark that node as visited.
-        
+                neighbor_node.set_info('BLACK')  # mark that node as visited.
+
         next_parent = dest_node
-        if next_parent.get_tag() == -1: return (float('inf'),[])
+        if next_parent.get_tag() == -1: return (float('inf'), [])
         path = list()
         while next_parent.get_tag() != -1:
             path.append(next_parent.get_key())
             next_parent = self._graph.get_node(next_parent.get_tag())
-        path.append(next_parent.get_key()) # add the last node
+        path.append(next_parent.get_key())  # add the last node
         path.reverse()
         return self._graph.get_node(path[-1]).get_weight(), path
-            
+
     """
     Finds the Strongly Connected Component(SCC) that node id1 is a part of.
     @param id1: The node id
@@ -167,12 +168,14 @@ class GraphAlgo(GraphAlgoInterface):
     """
 
     def connected_component(self, id1: int) -> list:
-        sccs = self.connected_components()
-        for list_element in sccs:
-            for id_element in list_element:
-                if id1 == id_element:
-                    return list_element
-
+        if id1 not in self.get_graph().get_all_v():
+            return []
+        else:
+            sccs = self.connected_components()
+            for list_element in sccs:
+                for id_element in list_element:
+                    if id1 == id_element:
+                        return list_element
 
     """
     Finds all the Strongly Connected Component(SCC) in the graph.
@@ -184,7 +187,7 @@ class GraphAlgo(GraphAlgoInterface):
     def connected_components(self) -> List[list]:
         self.reset_algo_variables()
         for node in self._graph.get_all_v().values():
-            if node.get_id() == -1: #if not visited
+            if node.get_id() == -1:  # if not visited
                 self.dfs(node)
         result_list = []
         for node_id in range(self._graph.v_size()):
