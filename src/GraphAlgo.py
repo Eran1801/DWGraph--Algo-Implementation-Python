@@ -1,3 +1,4 @@
+import math
 import random
 from typing import List
 import json
@@ -45,13 +46,10 @@ class GraphAlgo(GraphAlgoInterface):
             g = DiGraph()  # create a instance of a DiGraph that we will insert all the data from the json file to him
             for node in graph_dict["Nodes"]:  # going throw all the nodes in the json file ( graph_dict )
                 node_key = node["id"]
+                node_pos_tuple = None
                 if "pos" in node:
                     node_pos = node["pos"]
                     node_pos_tuple = tuple(map(float, node_pos.split(",")))
-                else:
-                    random_number_x = random.uniform(35.185, 35.215)
-                    random_number_y = random.uniform(32.098, 32.11)
-                    node_pos_tuple = (random_number_x, random_number_y, 0.0)
                 g.add_node(node_key, node_pos_tuple)
             for edge in graph_dict["Edges"]:  # Same thing for the Edges in the json file
                 edge_src = int(edge["src"])
@@ -229,19 +227,39 @@ class GraphAlgo(GraphAlgoInterface):
      """
 
     def plot_graph(self) -> None:
+        arrow_width = 0.00005
+        arrow_head_width = 8 * arrow_width
+        arrow_head_length = 8 * arrow_width
 
-        nodes_x = []
-        nodes_y = []
+        fig, ax = plt.subplots()
+
+        min_pos_x, min_pos_y, max_pos_x, max_pos_y = float("inf"), float("inf"), 0, 0
 
         for node in self._graph.get_all_v().values():
-            nodes_x.append(node.get_pos()[0])
-            nodes_y.append(node.get_pos()[1])
+            min_pos_x = node.get_pos()[0] if node.get_pos()[0] < min_pos_x else min_pos_x
+            min_pos_y = node.get_pos()[1] if node.get_pos()[1] < min_pos_y else min_pos_y
+            max_pos_x = node.get_pos()[0] if node.get_pos()[0] > max_pos_x else max_pos_x
+            max_pos_y = node.get_pos()[1] if node.get_pos()[1] > max_pos_y else max_pos_y
 
-        plt.plot(nodes_x, nodes_y, 'green', 'dashed', 3, 'o', 'blue', 12)
+            node_pos_tuple = (node.get_pos()[0], node.get_pos()[1])
+            node_circle = plt.Circle(node_pos_tuple, 0.00015, color='red')
+            ax.add_artist(node_circle)
+
+            plt.text(node.get_pos()[0]-0.000135, node.get_pos()[1]+0.00025, str(node.get_key()), fontsize=9, color="green")
+
+            src_node_pos = node.get_pos()
+
+            for dest_node_key in node.get_all_edges_from_node():
+                dest_node_pos = self._graph.get_node(dest_node_key).get_pos()
+                plt.arrow(src_node_pos[0], src_node_pos[1], dest_node_pos[0] - src_node_pos[0], dest_node_pos[1] - src_node_pos[1], width=arrow_width, head_width=arrow_head_width, head_length=arrow_head_length, length_includes_head=True)
+
+
+        #plt.plot(nodes_x, nodes_y, 'green', 'dashed', 3, 'o', 'blue', 12)
 
         # setting x and y axis range
-        plt.ylim(32.098, 32.11)
-        plt.xlim(35.185, 35.215)
+        offset = 0.0005
+        plt.ylim(min_pos_y - offset, max_pos_y + offset)
+        plt.xlim(min_pos_x - offset, max_pos_x + offset)
 
         # naming the x axis
         plt.xlabel('x - axis')

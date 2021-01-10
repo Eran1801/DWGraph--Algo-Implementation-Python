@@ -15,7 +15,7 @@ class NodeData:
         self._edges_from_node = {}
         random_number_x = random.uniform(35.185, 35.215)
         random_number_y = random.uniform(32.098, 32.11)
-        self._pos: tuple = (random_number_x, random_number_y, 0.0)
+        self._pos: tuple = pos if pos is not None else(random_number_x, random_number_y)
         self._id: int = -1 #represents id in algo (used in connected_components)
         self._low: int = -1 #represents low in algo (used in connected_components)
 
@@ -87,7 +87,7 @@ class NodeData:
         self._low = low
 
     def __repr__(self):
-        return "" + str(self._key) + ": score " + str(self._tag) #TODO: figure out what is the score
+        return "" + str(self._key) + ": |edges out| " + str(len(self._edges_from_node)) + " |edges in| " + str(len(self._edges_to_node)) + ""
 
     def __cmp__(self, other):
         return
