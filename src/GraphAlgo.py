@@ -166,14 +166,58 @@ class GraphAlgo(GraphAlgoInterface):
     """
 
     def connected_component(self, id1: int) -> list:
-        if id1 not in self.get_graph().get_all_v():
+        if self._graph is None:
             return []
-        else:
-            sccs = self.connected_components()
-            for list_element in sccs:
-                for id_element in list_element:
-                    if id1 == id_element:
-                        return list_element
+        node = self._graph.get_node(id1)
+        if node is None:
+            return []
+
+        connected_from_node = self.bfs_from(node)
+        connected_to_node = self.bfs_to(node)
+
+        strongly_connected_component = list(set(connected_from_node) & set(connected_to_node)) #makes a list from the intersection of connected_from_node and connected_to_node
+        return strongly_connected_component
+
+
+    def bfs_from(self, starting_node: NodeData) -> list:
+        queue = [starting_node]
+        connected_from = [starting_node.get_key()]
+        visited = {}
+        for node_key in self._graph.get_all_v():
+            visited[node_key] = False
+
+        visited[starting_node.get_key()] = True
+        while len(queue): #while the queue is not empty
+            node_from_queue = queue.pop()
+            for edge_from_node_key in node_from_queue.get_all_edges_from_node():
+                if not visited[edge_from_node_key]:
+                    queue.insert(0, self._graph.get_node(edge_from_node_key))
+                    connected_from.append(edge_from_node_key)
+                    visited[edge_from_node_key] = True
+
+        return connected_from
+
+    def bfs_to(self, starting_node: NodeData) -> list:
+        queue = [starting_node]
+        connected_to = [starting_node.get_key()]
+        visited = {}
+        for node_key in self._graph.get_all_v():
+            visited[node_key] = False
+
+        visited[starting_node.get_key()] = True
+        while len(queue):  # while the queue is not empty
+            node_from_queue = queue.pop()
+            for edge_to_node_key in node_from_queue.get_all_edges_to_node():
+                if not visited[edge_to_node_key]:
+                    queue.insert(0, self._graph.get_node(edge_to_node_key))
+                    connected_to.append(edge_to_node_key)
+                    visited[edge_to_node_key] = True
+
+        return connected_to
+
+
+
+
 
     """
     Finds all the Strongly Connected Component(SCC) in the graph.
@@ -183,41 +227,19 @@ class GraphAlgo(GraphAlgoInterface):
     """
 
     def connected_components(self) -> List[list]:
-        self.reset_algo_variables()
-        for node in self._graph.get_all_v().values():
-            if node.get_id() == -1:  # if not visited
-                self.dfs(node)
-        result_list = []
-        for node_id in range(self._graph.v_size()):
-            node_keys = []
-            for node in self._graph.get_all_v().values():
-                if node.get_low() == node_id:
-                    node_keys.append(node.get_key())
-            if len(node_keys):
-                result_list.append(node_keys)
-        return result_list
+        check_for_components_in_nodes = []
+        ans_list = []
+        for node_key in self._graph.get_all_v():
+            check_for_components_in_nodes.append(node_key)
+        while len(check_for_components_in_nodes):
+            node_key = check_for_components_in_nodes[0]
+            scc = self.connected_component(node_key)
+            ans_list.append(scc)
+            for connected_node in scc:
+                check_for_components_in_nodes.remove(connected_node) #remove the nodes that we found their sccs from check_for_components_in_nodes
 
-    def dfs(self, node: NodeData) -> None:
-        node.set_id(self._id_counter)
-        node.set_low(self._id_counter)
-        self._stack.append(self._id_counter)
-        self._id_counter += 1
+        return ans_list
 
-        for edge_dest_key in node.get_all_edges_from_node():
-            edge_dest_node = self._graph.get_node(edge_dest_key)
-            if edge_dest_node.get_id() == -1:
-                self.dfs(edge_dest_node)
-            if edge_dest_key in self._stack:
-                node.set_low(min(node.get_low(), edge_dest_node.get_low()))
-
-        if node.get_id() == node.get_low():
-            while len(self._stack):
-                node_key_from_stack = self._stack.pop()
-                node_from_stack = self._graph.get_node(node_key_from_stack)
-                node_from_stack.set_low(node.get_id())
-                if node_from_stack.get_id() == node.get_id():
-                    break
-            self._scc_counter += 1
 
     """
     Plots the graph.

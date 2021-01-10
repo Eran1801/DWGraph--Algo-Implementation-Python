@@ -38,7 +38,7 @@ class TestGraphAlgo(TestCase):
         g_algo.load_from_json(file)
 
         self.assertEqual(g_algo.get_graph().v_size(), 4)
-        self.assertEqual(g_algo.get_graph().e_size(), 6)
+        self.assertEqual(g_algo.get_graph().e_size(), 5)
 
     def test_save_to_json(self):
 
@@ -48,12 +48,9 @@ class TestGraphAlgo(TestCase):
         graph.save_to_json("graph_test.json")
         f = open("graph_test.json")
         data = json.load(f)  # data contains the data in the json
-        for id_ in data["Nodes"]:
-            if id_["id"] == 0:  # i know that this id is zero because we create the graph above
-                check_save = "save!"
-                break
+        weight = data['Edges'][2]['w']
 
-        self.assertEqual(check_save, "save!")  # so if the save of the graph was a success check_save will change
+        self.assertEqual(weight, 1.3)  # so if the save of the graph was a success check_save will change
 
     def test_shortest_path(self):
         graph = GraphAlgo()
