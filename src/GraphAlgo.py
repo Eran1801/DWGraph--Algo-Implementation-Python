@@ -249,9 +249,9 @@ class GraphAlgo(GraphAlgoInterface):
      """
 
     def plot_graph(self) -> None:
-        arrow_width = 0.00005
-        arrow_head_width = 8 * arrow_width
-        arrow_head_length = 8 * arrow_width
+        arrow_width = 0.00002
+        arrow_head_width = 10 * arrow_width
+        arrow_head_length = 13 * arrow_width
 
         fig, ax = plt.subplots()
 
@@ -267,7 +267,7 @@ class GraphAlgo(GraphAlgoInterface):
             node_circle = plt.Circle(node_pos_tuple, 0.00015, color='red')
             ax.add_artist(node_circle)
 
-            plt.text(node.get_pos()[0]-0.000135, node.get_pos()[1]+0.00025, str(node.get_key()), fontsize=9, color="green")
+            plt.text(node.get_pos()[0]-0.000135, node.get_pos()[1]+0.00025, str(node.get_key()), fontsize=10, color="red")
 
             src_node_pos = node.get_pos()
 
