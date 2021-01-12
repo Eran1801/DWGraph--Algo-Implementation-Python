@@ -35,4 +35,4 @@
     
     
     
-                                           for more information you can visit in our Wiki page 😎 
+                                       for more information you can visit in our Wiki page 😎 
