@@ -23,7 +23,7 @@
 
 #### The algorithms that we used in this project is : 
 
-1 . BFS algorithms : this algorithm helps us to find the shortestPath between src to dest and to how many scc we have in the graph
+1 . BFS algorithms : this algorithm helps us to find the shortestPath between src to dest and how many scc we have in the graph and on a spesfic node
 
  #### 🕐 Time complexity of the algorithms:
  
