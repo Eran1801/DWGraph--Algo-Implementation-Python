@@ -2,6 +2,7 @@ from GraphInterface import GraphInterface
 from NodeData import NodeData
 
 
+
 class DiGraph(GraphInterface):
 
     def __init__(self):

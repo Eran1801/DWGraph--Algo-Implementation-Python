@@ -147,7 +147,7 @@ class GraphAlgo(GraphAlgoInterface):
                 neighbor_node.set_info('BLACK')  # mark that node as visited.
 
         next_parent = dest_node
-        if next_parent.get_tag() == -1: return (float('inf'), [])
+        if next_parent.get_tag() == -1: return float('inf'), []
         path = list()
         while next_parent.get_tag() != -1:
             path.append(next_parent.get_key())
@@ -175,9 +175,9 @@ class GraphAlgo(GraphAlgoInterface):
         connected_from_node = self.bfs_from(node)
         connected_to_node = self.bfs_to(node)
 
-        strongly_connected_component = list(set(connected_from_node) & set(connected_to_node)) #makes a list from the intersection of connected_from_node and connected_to_node
+        strongly_connected_component = list(set(connected_from_node) & set(
+            connected_to_node))  # makes a list from the intersection of connected_from_node and connected_to_node
         return strongly_connected_component
-
 
     def bfs_from(self, starting_node: NodeData) -> list:
         queue = [starting_node]
@@ -187,7 +187,7 @@ class GraphAlgo(GraphAlgoInterface):
             visited[node_key] = False
 
         visited[starting_node.get_key()] = True
-        while len(queue): #while the queue is not empty
+        while len(queue):  # while the queue is not empty
             node_from_queue = queue.pop()
             for edge_from_node_key in node_from_queue.get_all_edges_from_node():
                 if not visited[edge_from_node_key]:
@@ -215,10 +215,6 @@ class GraphAlgo(GraphAlgoInterface):
 
         return connected_to
 
-
-
-
-
     """
     Finds all the Strongly Connected Component(SCC) in the graph.
     @return: The list all SCC
@@ -236,10 +232,10 @@ class GraphAlgo(GraphAlgoInterface):
             scc = self.connected_component(node_key)
             ans_list.append(scc)
             for connected_node in scc:
-                check_for_components_in_nodes.remove(connected_node) #remove the nodes that we found their sccs from check_for_components_in_nodes
+                check_for_components_in_nodes.remove(
+                    connected_node)  # remove the nodes that we found their sccs from check_for_components_in_nodes
 
         return ans_list
-
 
     """
     Plots the graph.
@@ -267,16 +263,18 @@ class GraphAlgo(GraphAlgoInterface):
             node_circle = plt.Circle(node_pos_tuple, 0.00015, color='red')
             ax.add_artist(node_circle)
 
-            plt.text(node.get_pos()[0]-0.000135, node.get_pos()[1]+0.00025, str(node.get_key()), fontsize=10, color="red")
+            plt.text(node.get_pos()[0] - 0.000135, node.get_pos()[1] + 0.00025, str(node.get_key()), fontsize=10,
+                     color="red")
 
             src_node_pos = node.get_pos()
 
             for dest_node_key in node.get_all_edges_from_node():
                 dest_node_pos = self._graph.get_node(dest_node_key).get_pos()
-                plt.arrow(src_node_pos[0], src_node_pos[1], dest_node_pos[0] - src_node_pos[0], dest_node_pos[1] - src_node_pos[1], width=arrow_width, head_width=arrow_head_width, head_length=arrow_head_length, length_includes_head=True)
+                plt.arrow(src_node_pos[0], src_node_pos[1], dest_node_pos[0] - src_node_pos[0],
+                          dest_node_pos[1] - src_node_pos[1], width=arrow_width, head_width=arrow_head_width,
+                          head_length=arrow_head_length, length_includes_head=True)
 
-
-        #plt.plot(nodes_x, nodes_y, 'green', 'dashed', 3, 'o', 'blue', 12)
+        # plt.plot(nodes_x, nodes_y, 'green', 'dashed', 3, 'o', 'blue', 12)
 
         # setting x and y axis range
         offset = 0.0005
