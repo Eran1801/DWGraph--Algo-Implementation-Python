@@ -1,4 +1,6 @@
 
+<img src="https://miro.medium.com/max/700/1*rmq7bd3GFjcwfXtkrBQaPQ.png" width="1000" height="275" >
+
 # Welcome to our projcet 👋
 ### In this project we implement a directed weighted graph in Python language
 
