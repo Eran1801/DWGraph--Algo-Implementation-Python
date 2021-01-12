@@ -1,3 +1,4 @@
+
 # Welcome to our projcet 👋
 ### In this project we implement a directed weighted graph in Python language
 
@@ -16,8 +17,7 @@
 
  #### 2️⃣ Interface GraphAlgoInterface : building the algorithm of the graph, this interface implemented by the GraphAlgo.py class
  
- #### 3️⃣ Class NodeData : represent the nodes in the graph, the nodes are hold in a dictionary in this key,value order - { node_key , node_data } 
- 
+ #### 3️⃣ Class NodeData : represent the nodes in the graph, the nodes are hold in a dictionary in this key,value order - {node_key , node_data} 
  
 -------------------------------------
 
