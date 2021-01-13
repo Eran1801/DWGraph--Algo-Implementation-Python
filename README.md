@@ -26,6 +26,12 @@ once all of the dependencies are installed, run the project:
 	cd DWGraph_Python
 	python src/main.py
 
+to run the comparison with NetworkX:
+
+	cd DWGraph_Python
+	python src/networkX_GraphAlgo_comparison.py
+	
+
  ### Our project is divided to two main Interfaces and one class we have added :
  
  #### 1️⃣ Interface GraphInterface : building the foundation of the graph, this interface implemented by the Diagraph.py class
