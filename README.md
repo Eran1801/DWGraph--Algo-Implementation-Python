@@ -19,16 +19,15 @@
 	
 once the project is cloned, install all of the dependencies:
 
+	cd DWGraph_Python
 	pip install -r requirements.txt
 	
 once all of the dependencies are installed, run the project:
 
-	cd DWGraph_Python
 	python src/main.py
 
 to run the comparison with NetworkX:
 
-	cd DWGraph_Python
 	python src/networkX_GraphAlgo_comparison.py
 	
 
