@@ -11,7 +11,20 @@
 
  ### How to run the project:
  
- TODO!! 
+ make a new directory and clone the project to it:
+ 
+ 	mkdir Ex3
+	cd Ex3
+	git clone https://github.com/Eran1801/DWGraph_Python.git
+	
+once the project is cloned, install all of the dependencies:
+
+	pip install -r requirements.txt
+	
+once all of the dependencies are installed, run the project:
+
+	cd DWGraph_Python
+	python src/main.py
 
  ### Our project is divided to two main Interfaces and one class we have added :
  
