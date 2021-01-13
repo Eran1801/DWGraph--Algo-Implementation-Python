@@ -1,6 +1,10 @@
 from DiGraph import DiGraph
 from GraphAlgo import GraphAlgo
 
+import sys; print(sys.executable)
+import os; print(os.getcwd())
+
+
 
 def check():
     """
