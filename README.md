@@ -1,10 +1,10 @@
 
-<img src="https://miro.medium.com/max/700/1*rmq7bd3GFjcwfXtkrBQaPQ.png" width="1000" height="275" >
+<img src="https://miro.medium.com/max/700/1*rmq7bd3GFjcwfXtkrBQaPQ.png" width="850" height="250" >
 
-# Welcome to our projcet 👋
-### In this project we implement a directed weighted graph in Python language
+# Welcome 👋
+### In this project we implement a directed weighted graph in Python.
 
-### This Object Oriented Programming task was written by:
+### This task was written by:
 
 * Eran Levy - 311382360
 * Etay Matzliah - 205987795
